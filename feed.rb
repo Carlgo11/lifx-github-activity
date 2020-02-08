@@ -11,6 +11,11 @@ a = Hash.new { |h, k| h[k] = '' }
 while doc.css('feed entry published').length > i && (Date.today - 5).strftime('%Y-%m-%d') <= doc.css('feed entry published')[i].content.split('T')[0]
 
   key = Date.parse(doc.css('feed entry published')[i].content).strftime('%Y-%m-%d')
+  if doc.css('feed entry id')[i].content.to_s.include? 'DeleteEvent'
+    a.store(key, 0) if a[key] == ''
+    i += 1
+    next
+  end
 
   if a[key] != ''
     (b = Integer(a[key]) + 1)
@@ -22,10 +27,30 @@ while doc.css('feed entry published').length > i && (Date.today - 5).strftime('%
   i += 1
 end
 
+# New list setting the color range
+c = Hash.new { |h, k| h[k] = '' }
+
 # Get max commits
 max = a.sort_by { |_key, value| value }.to_a.last[1]
-puts "most commits a day: #{max}"
 
+# Set color level for each day
 a.each do |key, value|
-  puts "#{key} #{value}"
+  case value
+  when max * 0.8..max
+    c.store(key, 4)
+  when max * 0.65..max * 0.8
+    c.store(key, 3)
+  when max * 0.4..max * 0.65
+    c.store(key, 2)
+  when 1..max * 0.4
+    c.store(key, 1)
+  else
+    c.store(key, 0)
+  end
 end
+
+# Convert "c" array to string
+d = c.map { |_k, v| v }.join(' ')
+
+# Pass on activity to LIFX script
+exec("python ./lifx.py #{d}")
