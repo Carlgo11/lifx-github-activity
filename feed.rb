@@ -1,29 +1,24 @@
 #! /usr/bin/env ruby
-
 require 'nokogiri'
 require 'open-uri'
 require 'date'
-doc = Nokogiri::HTML(open('https://github.com/carlgo11.atom'))
 
-i = 0
+doc = Nokogiri::HTML(open('https://github.com/carlgo11.atom'))
 a = Hash.new { |h, k| h[k] = '' }
 
-while doc.css('feed entry published').length > i && (Date.today - 5).strftime('%Y-%m-%d') <= doc.css('feed entry published')[i].content.split('T')[0]
+for k in 0..4 do
+  a.store((Date.today - k).strftime('%Y-%m-%d'), 0)
+end
 
+i = 0
+while doc.css('feed entry published').length > i && (Date.today - 5).strftime('%Y-%m-%d') <= doc.css('feed entry published')[i].content.split('T')[0]
   key = Date.parse(doc.css('feed entry published')[i].content).strftime('%Y-%m-%d')
-  if doc.css('feed entry id')[i].content.to_s.include? 'DeleteEvent'
-    a.store(key, 0) if a[key] == ''
+  if doc.css('feed entry id')[i].content.to_s.include?('DeleteEvent') || !a.key?(key)
     i += 1
     next
   end
 
-  if a[key] != ''
-    (b = Integer(a[key]) + 1)
-    a.store(key, b)
-  else
-    a.store(key, 1)
-  end
-
+  a.store(key, a[key] + 1)
   i += 1
 end
 
@@ -49,8 +44,5 @@ a.each do |key, value|
   end
 end
 
-# Convert "c" array to string
-d = c.map { |_k, v| v }.join(' ')
-
 # Pass on activity to LIFX script
-exec("python ./lifx.py #{d}")
+exec("python ./lifx.py #{c.map { |_k, v| v }.join(' ')}")
