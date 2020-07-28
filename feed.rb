@@ -45,4 +45,4 @@ a.each do |key, value|
 end
 
 # Pass on activity to LIFX script
-exec("python ./lifx.py #{c.map { |_k, v| v }.join(' ')}")
+puts `python3 lifx.py #{c.map { |_k, v| v }.join(' ')}`
