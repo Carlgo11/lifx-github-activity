@@ -1,3 +1,3 @@
-GitHub activity integration for Lifx Tiles
+GitHub Activity integration for LIFX Tiles
 
-usage: `docker run -p 6289:6289 carlgo11/lifx`
+Usage: `docker run -e {github username} carlgo11/lifx`

@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  lifx:
+      build: .
+      environment:
+        - GITHUB_USER=Carlgo11

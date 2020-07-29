@@ -3,7 +3,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'date'
 
-doc = Nokogiri::HTML(open('https://github.com/carlgo11.atom'))
+doc = Nokogiri::HTML(open("https://github.com/#{ENV['GITHUB_USER']}.atom"))
 a = Hash.new { |h, k| h[k] = '' }
 
 for k in 0..4 do

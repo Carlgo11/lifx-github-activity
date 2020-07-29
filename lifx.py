@@ -9,6 +9,10 @@ def main():
     lan = LifxLAN()
     lights = lan.get_tilechain_lights()
 
+    if not lights:
+      print("No online lights found on the network.")
+      raise Exception("No online lights found on the network.")
+
     # Tile Chain
     tiles = lights[0]
 
