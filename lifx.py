@@ -1,20 +1,28 @@
 #!/usr/bin/env python
 # coding=utf-8
 import sys
+from os import environ
 
 from lifxlan import LifxLAN
-
 
 def main():
     lan = LifxLAN()
     lights = lan.get_tilechain_lights()
 
     if not lights:
-      print("No online lights found on the network.")
-      raise Exception("No online lights found on the network.")
+      print("Lights not found.")
+      raise("Lights not found.")
+
+    print("Lights found:")
+    for light in lights:
+      print(light)
+
+    tile_number = 0
+    if environ.get('TILE_NUMBER') is not None:
+      tile_number = os.environ['TILE_NUMBER']
 
     # Tile Chain
-    tiles = lights[0]
+    tiles = lights[tile_number]
 
     # milisecond delay in changing the color
     color_delay = 1000

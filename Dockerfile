@@ -1,7 +1,7 @@
 FROM alpine
 
 # Install Ruby, LifxLAN, Python & Nokogiri
-RUN apk add --no-cache build-base libxml2-dev libxslt-dev ruby-full ruby-dev python3-dev py-pip gcc linux-headers
+RUN apk add --no-cache build-base libxml2-dev libxslt-dev ruby-full ruby-dev python2-dev py-pip gcc linux-headers
 RUN gem install nokogiri -- --use-system-libraries
 
 # Copy files

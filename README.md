@@ -4,12 +4,20 @@
 ![](https://img.shields.io/github/v/release/Carlgo11/lifx-github-activity?sort=semver&style=for-the-badge)
 ![](https://img.shields.io/github/workflow/status/Carlgo11/lifx-github-activity/Docker?style=for-the-badge)
 
-##Requirements
+## Requirements
+
 * Docker
 * A LIFX Tile connected to the same network as the host
 
 ## Usage
+
 ```BASH
 docker run -e {github username} carlgo11/lifx
 ```
 Change `{github username}` to your own username.
+
+## Environment variables
+| Name | Description | Default value |
+|------|-------------|---------------|
+|GITHUB_USER|GitHub Username to get activity from.||
+|TILE_NUMBER|LIFX Tile to connect to.|0|
