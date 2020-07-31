@@ -12,7 +12,7 @@
 ## Usage
 
 ```BASH
-docker run -e {github username} carlgo11/lifx
+docker run -e {github username} --network host carlgo11/lifx
 ```
 Change `{github username}` to your own username.
 
@@ -21,3 +21,5 @@ Change `{github username}` to your own username.
 |------|-------------|---------------|
 |GITHUB_USER|GitHub Username to get activity from.||
 |TILE_NUMBER|LIFX Tile to connect to.|0|
+|MAC_ADDR|Mac Address of the Tile (Optional)||
+|IP_ADDR|IP Address of the Tile (Optional)||

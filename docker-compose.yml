@@ -4,3 +4,4 @@ services:
       build: .
       environment:
         - GITHUB_USER=Carlgo11
+      network_mode: "host"

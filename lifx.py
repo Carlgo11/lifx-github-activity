@@ -3,26 +3,31 @@
 import sys
 from os import environ
 
-from lifxlan import LifxLAN
+from lifxlan import LifxLAN, TileChain
 
 def main():
     lan = LifxLAN()
-    lights = lan.get_tilechain_lights()
 
-    if not lights:
-      print("Lights not found.")
-      raise("Lights not found.")
+    tiles = ""
+    if environ.get('MAC_ADDR') is None and environ.get('IP_ADDR') is None:
+        lights = lan.get_tilechain_lights()
+        if not lights:
+          print("Lights not found.")
+          raise("Lights not found.")
 
-    print("Lights found:")
-    for light in lights:
-      print(light)
+        print("Lights found:")
+        for light in lights:
+          print(light)
 
-    tile_number = 0
-    if environ.get('TILE_NUMBER') is not None:
-      tile_number = os.environ['TILE_NUMBER']
+        tile_number = 0
+        if environ.get('TILE_NUMBER') is not None:
+          tile_number = os.environ['TILE_NUMBER']
+        tiles = lights[tile_number]
+    else:
+        mac = environ.get('MAC_ADDR')
+        ip = environ.get('IP_ADDR')
+        tiles = TileChain(mac, ip)
 
-    # Tile Chain
-    tiles = lights[tile_number]
 
     # milisecond delay in changing the color
     color_delay = 1000
