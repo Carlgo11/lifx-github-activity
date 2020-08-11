@@ -3,7 +3,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'date'
 
-doc = Nokogiri::HTML(open("https://github.com/#{ENV['GITHUB_USER']}.atom"))
+doc = Nokogiri::HTML(open("https://github.com/carlgo11.atom"))
 a = Hash.new { |h, k| h[k] = '' }
 
 for k in 0..4 do
@@ -21,7 +21,7 @@ while doc.css('feed entry published').length > i && (Date.today - 5).strftime('%
   a.store(key, a[key] + 1)
   i += 1
 end
-
+puts a
 # New list setting the color range
 c = Hash.new { |h, k| h[k] = '' }
 
@@ -43,6 +43,6 @@ a.each do |key, value|
     c.store(key, 0)
   end
 end
-
+puts "Color levels: #{c.map { |_k, v| v }}"
 # Pass on activity to LIFX script
 puts `python3 lifx.py #{c.map { |_k, v| v }.join(' ')}`
