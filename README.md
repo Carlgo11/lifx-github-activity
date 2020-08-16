@@ -1,8 +1,9 @@
 # LIFX Tile GitHub Activity integration
 
 [![](https://img.shields.io/github/license/carlgo11/lifx-github-activity?style=for-the-badge)](LICENSE)
-[![](https://img.shields.io/github/v/release/Carlgo11/lifx-github-activity?sort=semver&style=for-the-badge)](releases/latest)
+[![](https://img.shields.io/github/v/release/Carlgo11/lifx-github-activity?sort=semver&style=for-the-badge)](https://github.com/Carlgo11/lifx-github-activity/releases/latest)
 [![](https://img.shields.io/github/workflow/status/Carlgo11/lifx-github-activity/Docker?style=for-the-badge)](actions?query=workflow%3ADocker)
+[![Docker](https://img.shields.io/badge/Docker-Download-2496ed?style=for-the-badge&logo=docker&logoColor=fff)](https://hub.docker.com/r/carlgo11/lifx/)
 
 ## Requirements
 
