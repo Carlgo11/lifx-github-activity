@@ -31,9 +31,10 @@ docker run -e GITHUB_USER={GitHub username} MAC_ADDR={MAC address} IP_ADDR={IP A
  
 ## Environment variables
 
-| Name | Description | Default value |
-|------|-------------|---------------|
-|GITHUB_USER|GitHub Username to get activity from.||
-|TILE_NUMBER|LIFX Tile to connect to.|0|
-|MAC_ADDR|MAC Address of the Tile||
-|IP_ADDR|IP Address of the Tile||
+| Name | Description | Default value |Data Type|
+|------|-------------|---------------|---------|
+|GITHUB_USER|GitHub Username to get activity from.| |String|
+|TILE_NUMBER|LIFX Tile to connect to.|0|Integer|
+|MAC_ADDR|MAC Address of the Tile.| |String|
+|IP_ADDR|IP Address of the Tile.| |String|
+|REVERSE|Reverse tile order.| |Boolean|

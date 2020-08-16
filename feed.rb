@@ -1,48 +1,56 @@
 #! /usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'nokogiri'
 require 'open-uri'
 require 'date'
 
-doc = Nokogiri::HTML(open("https://github.com/carlgo11.atom"))
-a = Hash.new { |h, k| h[k] = '' }
-
-for k in 0..4 do
-  a.store((Date.today - k).strftime('%Y-%m-%d'), 0)
+if ENV['GITHUB_USER'].nil?
+  abort("Error: Set environment variable 'GITHUB_USER'!")
 end
 
-i = 0
-while doc.css('feed entry published').length > i && (Date.today - 5).strftime('%Y-%m-%d') <= doc.css('feed entry published')[i].content.split('T')[0]
-  key = Date.parse(doc.css('feed entry published')[i].content).strftime('%Y-%m-%d')
-  if doc.css('feed entry id')[i].content.to_s.include?('DeleteEvent') || !a.key?(key)
-    i += 1
-    next
-  end
-
-  a.store(key, a[key] + 1)
-  i += 1
+begin
+  doc = Nokogiri::HTML(open("https://github.com/#{ENV['GITHUB_USER']}.atom"))
+rescue OpenURI::HTTPError => e
+  abort("Error: 404 - Couldn't fetch user activity. Double check the spelling?") if e.message == '404 Not Found'
+  raise e
 end
-puts a
-# New list setting the color range
-c = Hash.new { |h, k| h[k] = '' }
+
+active_days = Array.new(5, 0)
+
+doc.css('feed entry published').each do |entry|
+  diff = Date.today - Date.iso8601(entry.content)
+  break if diff >= 5
+
+  active_days[diff] += 1
+end
 
 # Get max commits
-max = a.sort_by { |_key, value| value }.to_a.last[1]
+max = active_days.max
+output = []
 
-# Set color level for each day
-a.each do |key, value|
-  case value
-  when max * 0.8..max
-    c.store(key, 4)
-  when max * 0.65..max * 0.8
-    c.store(key, 3)
-  when max * 0.4..max * 0.65
-    c.store(key, 2)
-  when 1..max * 0.4
-    c.store(key, 1)
-  else
-    c.store(key, 0)
+if max.zero?
+  output = Array.new(5, 0)
+else
+  # Set color level for each day
+  active_days.each do |value|
+    output = case value
+             when max * 0.8..max
+               [*output, 4]
+             when max * 0.65..max * 0.8
+               [*output, 3]
+             when max * 0.4..max * 0.65
+               [*output, 2]
+             when 1..max * 0.4
+               [*output, 1]
+             else
+               [*output, 0]
+             end
   end
+  output = output.reverse if ENV['REVERSE']
 end
-puts "Color levels: #{c.map { |_k, v| v }}"
-# Pass on activity to LIFX script
-puts `python3 lifx.py #{c.map { |_k, v| v }.join(' ')}`
+
+puts "Color levels: #{output.join(' ')}"
+
+# Pass color levels to LifxLAN Python script
+puts `python3 lifx.py #{output.join(' ')}`

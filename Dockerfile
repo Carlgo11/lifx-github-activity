@@ -14,15 +14,10 @@ RUN adduser -Dh /tmp/lifx -u 1000 lifx lifx
 RUN chown lifx:lifx -R /opt/lifx
 
 # Install lifx.sh as a cron job
-COPY lifx.sh /etc/periodic/hourly/lifx.sh
-RUN chmod +x /etc/periodic/hourly/lifx.sh
+COPY lifx.sh /etc/periodic/hourly/lifx
+RUN chmod a+x /etc/periodic/hourly/lifx
 RUN touch /var/log/lifx.log; chmod 777 /var/log/lifx.log
 USER lifx
-
-# Install gem dependencies
-RUN bundle config build.nokogiri --use-system-libraries
-RUN bundle config set path 'vendor/bundle'
-RUN bundle install
 
 # Install python dependencies
 RUN pip install -r requirements.txt
