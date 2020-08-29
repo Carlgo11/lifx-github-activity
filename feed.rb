@@ -1,44 +1,48 @@
 #! /usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'nokogiri'
 require 'open-uri'
 require 'date'
 
-a = Hash.new { |h, k| h[k] = '' }
+abort("Error: Set environment variable 'GITHUB_USER'!") if ENV['GITHUB_USER'].nil?
 
-for k in 0..4 do
-  a.store((Date.today - k).strftime('%Y-%m-%d'), 0)
-end
+html = Nokogiri::HTML.parse(URI.open("https://github.com/#{ENV['GITHUB_USER']}"))
 
-document = Nokogiri::HTML.parse(URI.open("https://github.com/#{ENV['GITHUB_USER']}"))
+active_days = Array.new(5, 0)
 
 # Get last 5 items in array
-document.css('.day').each do |item|
-  next if (Date.today - Date.iso8601(item['data-date'])) >= 5
-  a.store(item['data-date'], Integer(item['data-count']))
+html.css('.day').each do |item|
+  diff = Integer(Date.today - Date.iso8601(item['data-date']))
+  active_days[diff] = Integer(item['data-count']) if diff < 5
 end
-
-# New list setting the color range
-c = Hash.new { |h, k| h[k] = '' }
 
 # Get max commits
-max = a.sort_by { |_key, value| value }.to_a.last[1]
+max = active_days.max
+output = []
 
-# Set color level for each day
-a.each do |key, value|
-  case value
-  when max * 0.8..max
-    c.store(key, 4)
-  when max * 0.65..max * 0.8
-    c.store(key, 3)
-  when max * 0.4..max * 0.65
-    c.store(key, 2)
-  when 1..max * 0.4
-    c.store(key, 1)
-  else
-    c.store(key, 0)
+if max.zero?
+  output = Array.new(5, 0)
+else
+  # Set color level for each day
+  active_days.each do |value|
+    output = case value
+             when max * 0.8..max
+               [*output, 4]
+             when max * 0.65..max * 0.8
+               [*output, 3]
+             when max * 0.4..max * 0.65
+               [*output, 2]
+             when 1..max * 0.4
+               [*output, 1]
+             else
+               [*output, 0]
+             end
   end
+  output = output.reverse if ENV['REVERSE']
 end
 
-puts c
-# Pass on activity to LIFX script
-puts `python3 lifx.py #{c.map { |_k, v| v }.join(' ')}`
+puts "Color levels: #{output.join(' ')}"
+
+# Pass color levels to LifxLAN Python script
+puts `python3 lifx.py #{output.join(' ')}`
